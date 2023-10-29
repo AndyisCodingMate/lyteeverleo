@@ -25,7 +25,7 @@ app.get("/status", (request, response) => {
 
 app.put("/api/mintHT/:toAddress", (request, response) => {
     
-    error = "200 OK"
+    let error = "200 OK"
     
     try {
         mintHT(request.params.toAddress);
@@ -39,7 +39,7 @@ app.put("/api/mintHT/:toAddress", (request, response) => {
 
 app.put("/api/mintMRT/:admingAddress/:toAddress/:data", (request, response) => {
     
-    error = "200 OK"
+    let error = "200 OK"
     
     try {
         mintMRT(
@@ -57,7 +57,7 @@ app.put("/api/mintMRT/:admingAddress/:toAddress/:data", (request, response) => {
 
 app.put("/api/burnHT/:toAddress", (request, response) => {
     
-    error = "200 OK"
+    let error = "200 OK"
 
     try {
         burnHT(request.params.toAddress);

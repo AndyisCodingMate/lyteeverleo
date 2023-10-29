@@ -18,13 +18,15 @@ export async function mintHT(toAddress) {
 
     const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, "latest") //get latest nonce
 
+    nftContract.methods.mint(toAddress);
+
     //the transaction
     const tx = {
       from: PUBLIC_KEY,
       to: toAddress,
       nonce: nonce,
       gas: 21432,
-      data: nftContract.methods.mint(toAddress).encodeABI(),
+      data: "13",
     }
 
     const signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY)
