@@ -8,14 +8,13 @@ contract HospitalToken is ERC721 {
     mapping(address => uint256) balances;
     address public admin;
 
-constructor(string memory name, string memory symbol) ERC721("name", "symbol") {
-    totalSupply = 0;
-    admin = msg.sender;
-}
+    constructor() ERC721("name", "symbol") {
+        totalSupply = 0;
+        admin = msg.sender;
+    }
 
     modifier onlyAdmin() {
         require(msg.sender == admin, "HospitalToken: Caller is not the admin");
-        _;
     }
 
     function mint(address to) public onlyAdmin{
@@ -27,6 +26,10 @@ constructor(string memory name, string memory symbol) ERC721("name", "symbol") {
         require(balances[from] > 0, "Insufficient balance");
         totalSupply -= 1;
         balances[from] -= 1;
+    }
+
+    function balanceOf(address user) public view returns (uint256) {
+        return balances[user];
     }
 }
 
@@ -41,20 +44,19 @@ contract MedicalRecordToken is ERC721 {
 
     mapping(uint256 => record) public records;
 
-    constructor(address _hospitalTokenAddress, string memory name, string memory symbol) ERC721("MedicalRecordToken", "MRT") {
+    constructor() ERC721("MedicalRecordToken", "MRT") {
         tokenCounter = 0;
-        hospitalToken = HospitalToken(_hospitalTokenAddress);
+        hospitalToken = HospitalToken(msg.sender);
     }
 
-    modifier canView(uint256 tokenId) {
+    modifier canView(uint256 tokenId, HospitalToken hospitalToken) {
         require(
             msg.sender == ownerOf(tokenId) || hospitalToken.balanceOf(msg.sender) > 0,
             "MedicalRecordToken: You are not allowed to view this record"
         );
-        _;
     }
 
-    function mint(address to, string memory p_data) public {
+    function mint(address _hospitalTokenAddress, address to, string memory p_data) public {
         uint256 tokenId = tokenCounter;
         _safeMint(to, tokenId);
         records[tokenId] = record(tokenId, p_data);
@@ -63,7 +65,7 @@ contract MedicalRecordToken is ERC721 {
 
     function getTextData(uint256 tokenId) 
         public 
-        view canView(tokenId)
+        view canView(tokenId, hospitalToken)
         returns (uint256, string memory) 
     {
         require(
