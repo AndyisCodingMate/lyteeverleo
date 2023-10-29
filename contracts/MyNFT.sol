@@ -15,7 +15,6 @@ contract HospitalToken is ERC721 {
 
     modifier onlyAdmin() {
         require(msg.sender == admin, "HospitalToken: Caller is not the admin");
-        _;
     }
 
     function mint(address to) public onlyAdmin {
