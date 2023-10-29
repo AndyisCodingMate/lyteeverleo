@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.19;
+pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
@@ -15,20 +15,21 @@ contract HospitalToken is ERC721 {
 
     modifier onlyAdmin() {
         require(msg.sender == admin, "HospitalToken: Caller is not the admin");
+        _;
     }
 
-    function mint(address to) public onlyAdmin{
+    function mint(address to) public onlyAdmin {
         totalSupply += 1;
         balances[to] += 1;
     }
 
     function burn(address from) public onlyAdmin {
-        require(balances[from] > 0, "Insufficient balance");
+        require(balances[from] > 0, "HospitalToken: Insufficient balance");
         totalSupply -= 1;
         balances[from] -= 1;
     }
 
-    function balanceOf(address user) public view returns (uint256) {
+    function balance(address user) public view returns (uint256) {
         return balances[user];
     }
 }
@@ -49,29 +50,24 @@ contract MedicalRecordToken is ERC721 {
         hospitalToken = HospitalToken(msg.sender);
     }
 
-    modifier canView(uint256 tokenId, HospitalToken hospitalToken) {
+    modifier canView(uint256 tokenId) {
         require(
-            msg.sender == ownerOf(tokenId) || hospitalToken.balanceOf(msg.sender) > 0,
+            msg.sender == ownerOf(tokenId) || hospitalToken.balance(msg.sender) > 0,
             "MedicalRecordToken: You are not allowed to view this record"
         );
+        _;
     }
 
-    function mint(address _hospitalTokenAddress, address to, string memory p_data) public {
+    function mint(address admin, address to, string memory p_data) public {
+        require(msg.sender == admin, "MedicalRecordToken: Caller is not the admin");
         uint256 tokenId = tokenCounter;
         _safeMint(to, tokenId);
         records[tokenId] = record(tokenId, p_data);
         tokenCounter++;
     }
 
-    function getTextData(uint256 tokenId) 
-        public 
-        view canView(tokenId, hospitalToken)
-        returns (uint256, string memory) 
-    {
-        require(
-            tokenId <= tokenCounter, 
-            "MedicalRecordNFT: URI query for nonexistent token"
-            );
+    function getTextData(uint256 tokenId) public view canView(tokenId) returns (uint256, string memory) {
+        require(tokenId <= tokenCounter, "MedicalRecordNFT: URI query for nonexistent token");
         record memory retrievedRecord = records[tokenId];
         return (tokenId, retrievedRecord.encryptedPatientData);
     }
