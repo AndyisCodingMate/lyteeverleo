@@ -2,9 +2,9 @@
 pragma solidity >=0.8.19;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract HospitalToken is IERC20 {
+contract HospitalToken is ERC721 {
     uint256 public totalSupply;
     mapping(address => uint256) balances;
     address public admin;
@@ -14,7 +14,7 @@ contract HospitalToken is IERC20 {
         admin = msg.sender;
     }
 
-     modifier onlyAdmin() {
+    modifier onlyAdmin() {
         require(msg.sender == admin, "HospitalToken: Caller is not the admin");
         _;
     }
@@ -62,9 +62,13 @@ contract MedicalRecordToken is ERC721 {
         tokenCounter++;
     }
 
-    function getTextData(uint256 tokenId) public canView view returns (uint256, string memory) {
+    function getTextData(uint256 tokenId) 
+        public 
+        view canView(tokenId)
+        returns (uint256, string memory) 
+    {
         require(
-            _exists(tokenId), 
+            tokenId <= tokenCounter, 
             "MedicalRecordNFT: URI query for nonexistent token"
             );
         record memory retrievedRecord = records[tokenId];
