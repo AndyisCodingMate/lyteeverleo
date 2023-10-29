@@ -45,9 +45,9 @@ contract MedicalRecordToken is ERC721 {
 
     mapping(uint256 => record) public records;
 
-    constructor() ERC721("MedicalRecordToken", "MRT") {
+    constructor(HospitalToken ht) ERC721("MedicalRecordToken", "MRT") {
         tokenCounter = 0;
-        hospitalToken = HospitalToken(msg.sender);
+        hospitalToken = ht;
     }
 
     modifier canView(uint256 tokenId) {
