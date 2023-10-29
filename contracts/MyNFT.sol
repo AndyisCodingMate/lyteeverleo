@@ -2,17 +2,16 @@
 pragma solidity >=0.8.19;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract HospitalToken is ERC721 {
     uint256 public totalSupply;
     mapping(address => uint256) balances;
     address public admin;
 
-    constructor() {
-        totalSupply = 0;
-        admin = msg.sender;
-    }
+constructor(string memory name, string memory symbol) ERC721("name", "symbol") {
+    totalSupply = 0;
+    admin = msg.sender;
+}
 
     modifier onlyAdmin() {
         require(msg.sender == admin, "HospitalToken: Caller is not the admin");
@@ -42,7 +41,7 @@ contract MedicalRecordToken is ERC721 {
 
     mapping(uint256 => record) public records;
 
-    constructor(address _hospitalTokenAddress) ERC721("MedicalRecordToken", "MRT") {
+    constructor(address _hospitalTokenAddress, string memory name, string memory symbol) ERC721("MedicalRecordToken", "MRT") {
         tokenCounter = 0;
         hospitalToken = HospitalToken(_hospitalTokenAddress);
     }
