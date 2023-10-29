@@ -63,7 +63,10 @@ contract MedicalRecordToken is ERC721 {
     }
 
     function getTextData(uint256 tokenId) public canView view returns (uint256, string memory) {
-        require(_exists(tokenId), "MedicalRecordNFT: URI query for nonexistent token");
+        require(
+            _exists(tokenId), 
+            "MedicalRecordNFT: URI query for nonexistent token"
+            );
         record memory retrievedRecord = records[tokenId];
         return (tokenId, retrievedRecord.encryptedPatientData);
     }
